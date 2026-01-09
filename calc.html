@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator & String Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Space Mono', monospace; }
+        body { 
+            background: #000;
+            min-height: 100vh;
+        }
+        .btn-calc {
+            transition: all 0.15s;
+            border: 2px solid #fff;
+        }
+        .btn-calc:active {
+            transform: translateY(2px);
+        }
+        .border-custom {
+            border: 3px solid #fff;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex items-center justify-center">
+    <div class="w-full max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-5xl md:text-6xl font-bold text-white mb-3 tracking-wider">CALC</h1>
+            <div class="flex justify-center gap-4">
+                <button id="btn-calc" class="px-8 py-2 bg-white text-black font-bold tracking-wider hover:bg-gray-200">
+                    CALCULATOR
+                </button>
+                <button id="btn-string" class="px-8 py-2 bg-black text-white font-bold tracking-wider border-2 border-white hover:bg-white hover:text-black">
+                    STRING OPS
+                </button>
+            </div>
+        </div>
+
+        <!-- Calculator Panel -->
+        <div id="calc-panel" class="border-custom bg-black p-6 md:p-8">
+            <!-- Display -->
+            <div class="bg-white border-4 border-black mb-6 p-6">
+                <input type="text" id="display" readonly class="w-full bg-transparent text-right text-4xl md:text-5xl font-bold text-black outline-none" value="0">
+            </div>
+
+            <!-- Buttons Grid -->
+            <div class="grid grid-cols-4 gap-3">
+                <!-- Row 1 -->
+                <button onclick="clearCalc()" class="btn-calc py-5 bg-white text-black font-bold hover:bg-gray-200">AC</button>
+                <button onclick="deleteCalc()" class="btn-calc py-5 bg-white text-black font-bold hover:bg-gray-200">DEL</button>
+                <button onclick="appendCalc('(')" class="btn-calc py-5 bg-white text-black font-bold hover:bg-gray-200">(</button>
+                <button onclick="appendCalc(')')" class="btn-calc py-5 bg-white text-black font-bold hover:bg-gray-200">)</button>
+
+                <!-- Row 2 -->
+                <button onclick="appendCalc('Math.sin(')" class="btn-calc py-5 bg-black text-white font-bold hover:bg-gray-900">SIN</button>
+                <button onclick="appendCalc('Math.cos(')" class="btn-calc py-5 bg-black text-white font-bold hover:bg-gray-900">COS</button>
+                <button onclick="appendCalc('Math.tan(')" class="btn-calc py-5 bg-black text-white font-bold hover:bg-gray-900">TAN</button>
+                <button onclick="appendCalc('/')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">÷</button>
+
+                <!-- Row 3 -->
+                <button onclick="appendCalc('7')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">7</button>
+                <button onclick="appendCalc('8')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">8</button>
+                <button onclick="appendCalc('9')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">9</button>
+                <button onclick="appendCalc('*')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">×</button>
+
+                <!-- Row 4 -->
+                <button onclick="appendCalc('4')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">4</button>
+                <button onclick="appendCalc('5')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">5</button>
+                <button onclick="appendCalc('6')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">6</button>
+                <button onclick="appendCalc('-')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">−</button>
+
+                <!-- Row 5 -->
+                <button onclick="appendCalc('1')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">1</button>
+                <button onclick="appendCalc('2')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">2</button>
+                <button onclick="appendCalc('3')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">3</button>
+                <button onclick="appendCalc('+')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">+</button>
+
+                <!-- Row 6 -->
+                <button onclick="sqrtCalc()" class="btn-calc py-5 bg-black text-white font-bold hover:bg-gray-900">√</button>
+                <button onclick="appendCalc('0')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">0</button>
+                <button onclick="appendCalc('.')" class="btn-calc py-5 bg-white text-black font-bold text-xl hover:bg-gray-200">.</button>
+                <button onclick="calculate()" class="btn-calc py-5 bg-black text-white font-bold text-2xl hover:bg-gray-900">=</button>
+            </div>
+
+            <!-- Extra Functions -->
+            <div class="grid grid-cols-4 gap-3 mt-3">
+                <button onclick="appendCalc('Math.PI')" class="btn-calc py-4 bg-black text-white font-bold hover:bg-gray-900">π</button>
+                <button onclick="appendCalc('Math.E')" class="btn-calc py-4 bg-black text-white font-bold hover:bg-gray-900">e</button>
+                <button onclick="appendCalc('**')" class="btn-calc py-4 bg-black text-white font-bold hover:bg-gray-900">x^y</button>
+                <button onclick="appendCalc('Math.log(')" class="btn-calc py-4 bg-black text-white font-bold hover:bg-gray-900">LOG</button>
+            </div>
+        </div>
+
+        <!-- String Panel -->
+        <div id="string-panel" class="hidden border-custom bg-black p-6 md:p-8">
+            <!-- Input Section -->
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-white font-bold mb-2 tracking-wider">INPUT 1</label>
+                    <input type="text" id="str1" class="w-full px-4 py-3 bg-white text-black font-bold border-4 border-black outline-none" placeholder="ENTER TEXT...">
+                </div>
+                <div>
+                    <label class="block text-white font-bold mb-2 tracking-wider">INPUT 2</label>
+                    <input type="text" id="str2" class="w-full px-4 py-3 bg-white text-black font-bold border-4 border-black outline-none" placeholder="ENTER TEXT...">
+                </div>
+            </div>
+
+            <!-- Result Display -->
+            <div class="bg-white border-4 border-black p-6 mb-6">
+                <div class="text-black font-bold mb-2">OUTPUT:</div>
+                <div id="stringResult" class="text-black font-bold break-words text-lg">READY</div>
+            </div>
+
+            <!-- String Operations -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <button onclick="strLength()" class="btn-calc py-4 bg-white text-black font-bold hover:bg-gray-200">
+                    LENGTH
+                </button>
+                <button onclick="strReverse()" class="btn-calc py-4 bg-white text-black font-bold hover:bg-gray-200">
+                    REVERSE
+                </button>
+                <button onclick="strUpper()" class="btn-calc py-4 bg-white text-black font-bold hover:bg-gray-200">
+                    UPPER
+                </button>
+                <button onclick="strLower()" class="btn-calc py-4 bg-white text-black font-bold hover:bg-gray-200">
+                    LOWER
+                </button>
+                <button onclick="strConcat()" class="btn-calc py-4 bg-white text-black font-bold hover:bg-gray-200">
+                    CONCAT
+                </button>
+                <button onclick="strCompare()" class="btn-calc py-4 bg-white text-black font-bold hover:bg-gray-200">
+                    COMPARE
+                </button>
+                <button onclick="strTrim()" class="btn-calc py-4 bg-black text-white font-bold hover:bg-gray-900">
+                    TRIM
+                </button>
+                <button onclick="strSplit()" class="btn-calc py-4 bg-black text-white font-bold hover:bg-gray-900">
+                    SPLIT
+                </button>
+                <button onclick="strSubstring()" class="btn-calc py-4 bg-black text-white font-bold hover:bg-gray-900">
+                    SLICE
+                </button>
+                <button onclick="strReplace()" class="btn-calc py-4 bg-black text-white font-bold hover:bg-gray-900">
+                    REPLACE
+                </button>
+                <button onclick="strCount()" class="btn-calc py-4 bg-black text-white font-bold hover:bg-gray-900">
+                    COUNT
+                </button>
+                <button onclick="clearStrings()" class="btn-calc py-4 bg-white text-black font-bold hover:bg-gray-200">
+                    CLEAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mode switching
+        const btnCalc = document.getElementById('btn-calc');
+        const btnString = document.getElementById('btn-string');
+        const calcPanel = document.getElementById('calc-panel');
+        const stringPanel = document.getElementById('string-panel');
+
+        btnCalc.addEventListener('click', () => {
+            btnCalc.className = 'px-8 py-2 bg-white text-black font-bold tracking-wider hover:bg-gray-200';
+            btnString.className = 'px-8 py-2 bg-black text-white font-bold tracking-wider border-2 border-white hover:bg-white hover:text-black';
+            calcPanel.classList.remove('hidden');
+            stringPanel.classList.add('hidden');
+        });
+
+        btnString.addEventListener('click', () => {
+            btnString.className = 'px-8 py-2 bg-white text-black font-bold tracking-wider hover:bg-gray-200';
+            btnCalc.className = 'px-8 py-2 bg-black text-white font-bold tracking-wider border-2 border-white hover:bg-white hover:text-black';
+            stringPanel.classList.remove('hidden');
+            calcPanel.classList.add('hidden');
+        });
+
+        // Calculator Functions
+        const display = document.getElementById('display');
+
+        function appendCalc(value) {
+            if (display.value === '0' || display.value === 'ERROR') {
+                display.value = value;
+            } else {
+                display.value += value;
+            }
+        }
+
+        function clearCalc() {
+            display.value = '0';
+        }
+
+        function deleteCalc() {
+            if (display.value.length > 1) {
+                display.value = display.value.slice(0, -1);
+            } else {
+                display.value = '0';
+            }
+        }
+
+        function calculate() {
+            try {
+                const result = eval(display.value);
+                display.value = Number.isFinite(result) ? result : 'ERROR';
+            } catch {
+                display.value = 'ERROR';
+            }
+        }
+
+        function sqrtCalc() {
+            try {
+                const val = eval(display.value);
+                display.value = Math.sqrt(val);
+            } catch {
+                display.value = 'ERROR';
+            }
+        }
+
+        // String Functions
+        function strLength() {
+            const s = document.getElementById('str1').value;
+            document.getElementById('stringResult').innerText = `LENGTH: ${s.length}`;
+        }
+
+        function strReverse() {
+            const s = document.getElementById('str1').value;
+            document.getElementById('stringResult').innerText = `${s.split('').reverse().join('')}`;
+        }
+
+        function strUpper() {
+            const s = document.getElementById('str1').value;
+            document.getElementById('stringResult').innerText = s.toUpperCase();
+        }
+
+        function strLower() {
+            const s = document.getElementById('str1').value;
+            document.getElementById('stringResult').innerText = s.toLowerCase();
+        }
+
+        function strConcat() {
+            const s1 = document.getElementById('str1').value;
+            const s2 = document.getElementById('str2').value;
+            document.getElementById('stringResult').innerText = s1 + s2;
+        }
+
+        function strCompare() {
+            const s1 = document.getElementById('str1').value;
+            const s2 = document.getElementById('str2').value;
+            document.getElementById('stringResult').innerText = s1 === s2 ? 'EQUAL' : 'NOT EQUAL';
+        }
+
+        function strTrim() {
+            const s = document.getElementById('str1').value;
+            document.getElementById('stringResult').innerText = s.trim();
+        }
+
+        function strSplit() {
+            const s = document.getElementById('str1').value;
+            const words = s.split(' ');
+            document.getElementById('stringResult').innerText = `${words.length} WORDS: ${words.join(', ')}`;
+        }
+
+        function strSubstring() {
+            const s = document.getElementById('str1').value;
+            const start = prompt('START INDEX:');
+            const end = prompt('END INDEX:');
+            if (start !== null && end !== null) {
+                document.getElementById('stringResult').innerText = s.substring(parseInt(start), parseInt(end));
+            }
+        }
+
+        function strReplace() {
+            const s = document.getElementById('str1').value;
+            const find = prompt('FIND:');
+            const replace = prompt('REPLACE WITH:');
+            if (find !== null && replace !== null) {
+                document.getElementById('stringResult').innerText = s.replaceAll(find, replace);
+            }
+        }
+
+        function strCount() {
+            const s = document.getElementById('str1').value;
+            const char = prompt('CHARACTER TO COUNT:');
+            if (char !== null) {
+                const count = s.split(char).length - 1;
+                document.getElementById('stringResult').innerText = `"${char}" APPEARS ${count} TIME(S)`;
+            }
+        }
+
+        function clearStrings() {
+            document.getElementById('str1').value = '';
+            document.getElementById('str2').value = '';
+            document.getElementById('stringResult').innerText = 'READY';
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (calcPanel.classList.contains('hidden')) return;
+            
+            if (e.key >= '0' && e.key <= '9' || e.key === '.') appendCalc(e.key);
+            if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') appendCalc(e.key);
+            if (e.key === 'Enter') calculate();
+            if (e.key === 'Escape') clearCalc();
+            if (e.key === 'Backspace') deleteCalc();
+        });
+    </script>
+</body>
+</html>
